@@ -118,38 +118,42 @@ export class TelemachyService {
 		}
 	}
 	public next() {
-		if (this.activeStep < (this.activeTour.length - 1)) {
-			this.activeStep += 1;
+		if (this.activeTour.length > 0) {
+			if (this.activeStep < (this.activeTour.length - 1)) {
+				this.activeStep += 1;
 
-			// Workaround for broken elements, just skip ahead
-			if (this.activeTour[this.activeStep] instanceof ElementTourStep && !(this.activeTour[this.activeStep] as ElementTourStep).domElement) {
-				if (this.canFinish()) {
-					this.finish();
-				} else {
-					this.next();
+				// Workaround for broken elements, just skip ahead
+				if (this.activeTour[this.activeStep] instanceof ElementTourStep && !(this.activeTour[this.activeStep] as ElementTourStep).domElement) {
+					if (this.canFinish()) {
+						this.finish();
+					} else {
+						this.next();
+					}
 				}
 			}
+			this.emit();
+			const step = this.activeTour[this.activeStep];
+			this.scrollViewport(step);
 		}
-		this.emit();
-		const step = this.activeTour[this.activeStep];
-		this.scrollViewport(step);
 	}
 	public previous() {
-		if (this.canGoBack()) {
-			this.activeStep -= 1;
+		if (this.activeTour.length > 0) {
+			if (this.canGoBack()) {
+				this.activeStep -= 1;
 
-			// Workaround for broken elements, just skip back or stay in the same position
-			if (this.activeTour[this.activeStep] instanceof ElementTourStep && !(this.activeTour[this.activeStep] as ElementTourStep).domElement) {
-				if (this.canGoBack()) {
-					this.previous();
-				} else {
-					this.next();
+				// Workaround for broken elements, just skip back or stay in the same position
+				if (this.activeTour[this.activeStep] instanceof ElementTourStep && !(this.activeTour[this.activeStep] as ElementTourStep).domElement) {
+					if (this.canGoBack()) {
+						this.previous();
+					} else {
+						this.next();
+					}
 				}
 			}
+			this.emit();
+			const step = this.activeTour[this.activeStep];
+			this.scrollViewport(step);
 		}
-		this.emit();
-		const step = this.activeTour[this.activeStep];
-		this.scrollViewport(step);
 	}
 
 	private reset() {
